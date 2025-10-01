@@ -1,7 +1,7 @@
 
 # Ollama ChatTTS Text-to-Speech Web UI
 
-A powerful web application that converts text into high-quality, natural-sounding speech using a locally running [Ollama](https://ollama.com/) instance and the [linmaobang/chattts-ollama](https://ollama.com/linmaobang/chattts-ollama) model.
+A powerful web application that converts text into high-quality, natural-sounding speech using a locally running [Ollama](https://ollama.com/) instance and the [legraphista/Orpheus:3b-ft-q8](https://ollama.com/legraphista/Orpheus:3b-ft-q8) model.
 
 ## ✨ Features
 
@@ -29,7 +29,7 @@ This application requires a local Ollama server to be running with the correct m
 2.  **Pull the ChatTTS Model**
     Open your terminal or command prompt and run the following command to download the text-to-speech model. This may take some time and requires a significant amount of disk space.
     ```bash
-    ollama pull linmaobang/chattts-ollama
+    ollama pull legraphista/Orpheus:3b-ft-q8
     ```
     Once downloaded, Ollama will automatically serve this model when requested by the web app.
 
@@ -111,5 +111,5 @@ Experiment with these tokens in your script to change the performance.
 -   **Firewall/CORS Issues**: Your browser is trying to connect to `http://localhost:11434`. Ensure no firewall is blocking this connection. If you are running Ollama on a different machine or have custom CORS policies, you may need to [configure Ollama's allowed origins](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-expose-ollama-on-my-network).
 
 ### "No audio data received from Ollama" error
--   **Model Not Pulled**: Make sure you have successfully run `ollama pull linmaobang/chattts-ollama`.
+-   **Model Not Pulled**: Make sure you have successfully run `ollama pull legraphista/Orpheus:3b-ft-q8`.
 -   **Ollama Error**: Check the terminal where you started Ollama (or its logs) for any error messages when you click the "Generate Audio" button. The model may have failed to load.

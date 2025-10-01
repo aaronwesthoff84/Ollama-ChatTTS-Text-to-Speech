@@ -115,6 +115,9 @@ const App = () => {
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [theme, setTheme] = useState<string>(getInitialTheme);
+    const [model, setModel] = useState<string>('legraphista/Orpheus:3b-ft-q8');
+  const [rawResponse, setRawResponse] = useState<string>('');
+  const [showRaw, setShowRaw] = useState<boolean>(false);
   const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
 
 
@@ -163,7 +166,7 @@ const App = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'legraphista/Orpheus:3b-ft-q8',
+          model: model,
           prompt: script,
           stream: false,
           options: {
@@ -178,7 +181,8 @@ const App = () => {
         throw new Error(`Ollama API error: ${response.status} ${response.statusText}. ${errorText}`);
       }
       
-      const data = await response.json();
+  const data = await response.json();
+  setRawResponse(JSON.stringify(data, null, 2));
       
       if (data.audio) {
         setStatusMessage('Processing audio data...');
@@ -242,6 +246,16 @@ const App = () => {
             aria-label="Script input for text to speech"
             placeholder="Enter your script here..."
           />
+          <label htmlFor="model-input" style={{ marginTop: 8, display: 'block' }}>Model</label>
+          <input
+            id="model-input"
+            type="text"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            disabled={isLoading}
+            aria-label="Ollama model identifier"
+            placeholder="e.g. legraphista/Orpheus:3b-ft-q8"
+          />
            <div className={`char-counter ${script.length > MAX_SCRIPT_LENGTH ? 'error' : ''}`}>
             {script.length} / {MAX_SCRIPT_LENGTH}
           </div>
@@ -256,6 +270,12 @@ const App = () => {
         
         {(statusMessage && !error) && <div className="status-message info">{statusMessage}</div>}
         {error && <div className="status-message error">{error}</div>}
+        <div style={{marginTop:8}}>
+          <button type="button" onClick={() => setShowRaw((s) => !s)} className="debug-toggle">{showRaw ? 'Hide' : 'Show'} raw response</button>
+        </div>
+        {showRaw && rawResponse && (
+          <pre className="raw-response" style={{whiteSpace:'pre-wrap', background:'#111', color:'#eee', padding:12, marginTop:8}}>{rawResponse}</pre>
+        )}
 
         {audios.length > 0 && (
           <section className="output-section">

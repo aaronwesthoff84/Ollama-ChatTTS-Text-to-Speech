@@ -77,6 +77,7 @@ function App() {
   const [statusMessage, setStatusMessage] = useState('');
   const [error, setError] = useState('');
   const [theme, setTheme] = useState(getInitialTheme);
+  const [model, setModel] = useState('legraphista/Orpheus:3b-ft-q8');
   const audioRefs = useRef([]);
 
   useEffect(() => {
@@ -116,7 +117,7 @@ function App() {
       const response = await fetch('http://localhost:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'legraphista/Orpheus:3b-ft-q4_k_m', prompt: script, stream: false, options: { seed:42, temperature:0.3 } }),
+        body: JSON.stringify({ model: model, prompt: script, stream: false, options: { seed:42, temperature:0.3 } }),
       });
 
       if (!response.ok) {
@@ -178,10 +179,12 @@ function App() {
       React.createElement('main', null,
         React.createElement('div', { className: 'input-section' },
           React.createElement('label', { htmlFor: 'script-input' }, 'Your Script'),
-          React.createElement('textarea', {
-            id: 'script-input', value: script, onChange: (e) => setScript(e.target.value), disabled: isLoading, 'aria-label': 'Script input for text to speech', placeholder: 'Enter your script here...'
-          }),
-          React.createElement('div', { className: `char-counter ${script.length > MAX_SCRIPT_LENGTH ? 'error' : ''}` }, `${script.length} / ${MAX_SCRIPT_LENGTH}`)
+            React.createElement('textarea', {
+              id: 'script-input', value: script, onChange: (e) => setScript(e.target.value), disabled: isLoading, 'aria-label': 'Script input for text to speech', placeholder: 'Enter your script here...'
+            }),
+            React.createElement('label', { htmlFor: 'model-input', style: { marginTop: 8, display: 'block' } }, 'Model'),
+            React.createElement('input', { id: 'model-input', type: 'text', value: model, onChange: (e) => setModel(e.target.value), disabled: isLoading, 'aria-label': 'Ollama model identifier', placeholder: 'e.g. legraphista/Orpheus:3b-ft-q8' }),
+            React.createElement('div', { className: `char-counter ${script.length > MAX_SCRIPT_LENGTH ? 'error' : ''}` }, `${script.length} / ${MAX_SCRIPT_LENGTH}`)
         ),
         React.createElement('div', { className: 'controls' },
           React.createElement('button', { onClick: handleGenerateAudio, disabled: isLoading }, isLoading ? React.createElement('span', { className: 'loader' }) : null, isLoading ? 'Generating...' : 'Generate Audio')
