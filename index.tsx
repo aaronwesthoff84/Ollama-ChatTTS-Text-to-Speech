@@ -72,6 +72,21 @@ function base64ToUint8Array(base64: string): Uint8Array {
     return bytes;
 }
 
+// Ensure we pass an actual ArrayBuffer (not a generic ArrayBufferLike) to Blob
+function toArrayBuffer(view: Uint8Array | ArrayBufferLike): ArrayBuffer {
+  if (view instanceof ArrayBuffer) return view;
+  if (view instanceof Uint8Array) {
+    // If the Uint8Array covers the whole underlying buffer, we can return it directly
+    if (view.byteOffset === 0 && view.byteLength === view.buffer.byteLength) {
+      return view.buffer as ArrayBuffer;
+    }
+    // Otherwise create a copy into a new ArrayBuffer
+    return view.slice().buffer as ArrayBuffer;
+  }
+  // For other ArrayBufferLike (e.g., SharedArrayBuffer) create a copy
+  return new Uint8Array(view as ArrayBufferLike).buffer as ArrayBuffer;
+}
+
 // --- React App Component ---
 
 const MAX_SCRIPT_LENGTH = 5000;
@@ -148,7 +163,7 @@ const App = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'linmaobang/chattts-ollama',
+          model: 'legraphista/Orpheus:3b-ft-q8',
           prompt: script,
           stream: false,
           options: {
@@ -174,7 +189,7 @@ const App = () => {
           bitsPerSample: 16
         };
         const wavHeader = createWavHeader(pcmData.byteLength, wavOptions);
-        const wavBlob = new Blob([wavHeader, pcmData], { type: 'audio/wav' });
+  const wavBlob = new Blob([wavHeader, toArrayBuffer(pcmData)], { type: 'audio/wav' });
         const url = URL.createObjectURL(wavBlob);
         
         const newAudio = {
@@ -206,7 +221,7 @@ const App = () => {
     <div className="app-container">
       <header>
         <div className="header-content">
-          <h1>Ollama Text-to-Speech</h1>
+          <h1>Ollama ChatTTS Text-to-Speech</h1>
           <p className="description">
               Enter some text and generate audio using your local Ollama ChatTTS model.
           </p>
