@@ -1,0 +1,5 @@
+{
+  "name": "Ollama ChatTTS Text-to-Speech",
+  "description": "WIP - A web application to convert text to speech using a local Ollama ChatTTS model.",
+  "requestFramePermissions": []
+}
